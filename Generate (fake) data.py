@@ -3,6 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from arch import arch_model
 
+# --- Real data ---
 url = "https://stooq.com/q/d/l/?s=^spx&i=d"
 sp500 = pd.read_csv(url)
 
@@ -14,12 +15,12 @@ sp500log = np.log(sp500['Close'] / sp500['Close'].shift(1))[1:].values
 sp500log_mean = np.mean(sp500log)
 sp500log_stationary = sp500log - sp500log_mean
 
-np.save('real_data.npy', sp500log)
+# np.save('real_data.npy', sp500log)
 
-# GARCH(1,1) model
+# --- GARCH(1,1) model ---
 model = arch_model(sp500log_stationary*100, mean='Zero', vol='GARCH', p=1, q=1)
 res = model.fit(disp='off')
-
+print("params:", res.params)
 # Quick test
 sim = model.simulate(res.params, nobs=len(sp500log_stationary))
 simulated_returns = sim['data'].values / 100 + sp500log_mean
@@ -39,10 +40,10 @@ for i in range(4):  # Generate 4 more samples
     simulated_returns = sim['data'].values / 100 + sp500log_mean
     garch_data.append(simulated_returns)
 
-np.save('garch_data.npy', np.array(garch_data))
+# np.save('garch_data.npy', np.array(garch_data))
 
 
-# GBM model
+# --- GBM model ---
 def generate_gbm_paths(mu, sigma, N, n_paths, dt=1):
     steps = int(N/dt)
     s = np.zeros((n_paths, steps))
@@ -74,5 +75,5 @@ plt.show()
 
 d = generate_gbm_paths(mu, sigma, N=len(sp500log), n_paths=5)
 d = np.diff(np.log(d), axis=1)
-np.save('gbm_data.npy', d)
+# np.save('gbm_data.npy', d)
 

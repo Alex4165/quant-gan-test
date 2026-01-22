@@ -1,0 +1,4 @@
+--- Overall Loss Comparison ---
+GAN final train loss: 0.8943028461560607 val loss: 0.5408753588795662
+GBM final train loss: 0.2931789899012074 val loss: 0.15160359526053072
+GARCH final train loss: 0.6677924720011652 val loss: 0.7224217504262924
